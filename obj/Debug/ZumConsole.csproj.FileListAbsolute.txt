@@ -1,0 +1,12 @@
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Debug\ZumConsole.Form1.resources
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Debug\ZumConsole.Properties.Resources.resources
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Debug\ZumConsole.csproj.GenerateResource.Cache
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\bin\Debug\ZumConsole.exe.config
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\bin\Debug\ZumConsole.exe
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\bin\Debug\ZumConsole.pdb
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\bin\Debug\ZumConsole.exe.CodeAnalysisLog.xml
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\bin\Debug\ZumConsole.exe.lastcodeanalysissucceeded
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Debug\ZumConsole.exe
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Debug\ZumConsole.pdb
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Debug\ZumConsole.Form2.resources
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Debug\ZumConsole.csprojResolveAssemblyReference.cache
