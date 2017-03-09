@@ -32,7 +32,7 @@ namespace ZumConsole
         String inputline = String.Empty;
         static String port_str = String.Empty;
         Int32 PortNumber = 41795;
-        TcpClient client;
+//        TcpClient client;
         NetworkStream tcp_stream;
         delegate void SetTextCallback(string text);
         NetworkConn net_conn = new NetworkConn();
@@ -401,58 +401,16 @@ namespace ZumConsole
             }
         }
 
-        private void hostname_TextChanged(object sender, EventArgs e)
-        {
-//            Hostname = hostname.Text;
-        }
-
-        private void Port_TextChanged(object sender, EventArgs e)
-        {
-            //port_str = Port.Text;
-            //PortNumber = Convert.ToUInt16(port_str, 10); 
-        }
-
-        private void TCP_connect_button_Click(object sender, EventArgs e)
-        {
-            if ((String.IsNullOrEmpty(Hostname)) || (PortNumber == 0))
-            {
-                SetDiagText("No host name or Port defined");
-                return;
-            }
-
-            try
-            {
-                    IPHostEntry hostInfo = Dns.GetHostEntry(Hostname);
-                    client = new TcpClient(hostInfo.HostName, PortNumber);
- 
-             }
-            catch (SocketException e4)
-            {
-                 SetDiagText("Failure to connect to TCP" + e4);
-                 tcp_connected = false;
-            }
-            if (client.Connected)
-            {
-                tcp_stream = client.GetStream();
-                SetDiagText("Connected to TCP");
-                
-                tcp_connected = true;
-                ZumConsole.Properties.Settings.Default.Hostname = Hostname;
-                ZumConsole.Properties.Settings.Default.Port = PortNumber;
-                ZumConsole.Properties.Settings.Default.Save();
-
-            }
-        }
-
-        
+       
         
         private void Form1Closing(object sender, FormClosingEventArgs e)
         {
             // The form is closing, save the user's preferences
             // Close everything.
-            ZumConsole.Properties.Settings.Default.Hostname = Hostname;
-            ZumConsole.Properties.Settings.Default.Port = PortNumber;
+            ZumConsole.Properties.Settings.Default.Hostname = net_conn.GetHostName();
+            ZumConsole.Properties.Settings.Default.Port = net_conn.GetPort();
             ZumConsole.Properties.Settings.Default.LogFile = log_file_path_str;
+            net_conn.CloseConnection();
         }
 
   
@@ -530,12 +488,12 @@ namespace ZumConsole
 
         }
 
-        private bool IsValidIp(string addr)
-        {
-            IPAddress ip;
-            bool valid = !string.IsNullOrEmpty(addr) && IPAddress.TryParse(addr, out ip);
-            return valid;
-        }
+        //private bool IsValidIp(string addr)
+        //{
+        //    IPAddress ip;
+        //    bool valid = !string.IsNullOrEmpty(addr) && IPAddress.TryParse(addr, out ip);
+        //    return valid;
+        //}
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -606,6 +564,13 @@ namespace ZumConsole
                 save_ascii = true;
             }
 
+        }
+
+        private void Energyscan_Click(object sender, EventArgs e)
+        {
+            Form3 form3 = new Form3();
+
+            form3.Show();
         }
 
  

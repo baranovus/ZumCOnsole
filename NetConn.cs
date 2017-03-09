@@ -84,5 +84,10 @@ namespace ZumConsole
             else { stream = null; }
             return (stream);
         }
+        public void CloseConnection()
+        {
+            client.Close();
+
+        }
     }
 }

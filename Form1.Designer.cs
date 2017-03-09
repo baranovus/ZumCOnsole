@@ -22,10 +22,10 @@
             {
                 logfile.Close();
             }
-            if (client != null)
-            {
-                client.Close();
-            }
+            //if (client != null)
+            //{
+            //    client.Close();
+            //}
             if (scriptfile != null)
             {
                 scriptfile.Close();
@@ -60,6 +60,7 @@
             this.StopScriptButton = new System.Windows.Forms.Button();
             this.ascii = new System.Windows.Forms.RadioButton();
             this.hex = new System.Windows.Forms.RadioButton();
+            this.Energyscan = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -242,11 +243,22 @@
             this.hex.UseVisualStyleBackColor = true;
             this.hex.CheckedChanged += new System.EventHandler(this.hex_CheckedChanged);
             // 
+            // Energyscan
+            // 
+            this.Energyscan.Location = new System.Drawing.Point(666, 20);
+            this.Energyscan.Name = "Energyscan";
+            this.Energyscan.Size = new System.Drawing.Size(87, 22);
+            this.Energyscan.TabIndex = 26;
+            this.Energyscan.Text = "Energy scan";
+            this.Energyscan.UseVisualStyleBackColor = true;
+            this.Energyscan.Click += new System.EventHandler(this.Energyscan_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(777, 624);
+            this.Controls.Add(this.Energyscan);
             this.Controls.Add(this.hex);
             this.Controls.Add(this.ascii);
             this.Controls.Add(this.StopScriptButton);
@@ -295,6 +307,7 @@
         private System.Windows.Forms.Button StopScriptButton;
         private System.Windows.Forms.RadioButton ascii;
         private System.Windows.Forms.RadioButton hex;
+        private System.Windows.Forms.Button Energyscan;
      }
 }
 

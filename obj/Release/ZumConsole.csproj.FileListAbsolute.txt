@@ -8,4 +8,3 @@ C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConso
 C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Release\ZumConsole.pdb
 C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Release\ZumConsole.Form2.resources
 C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Release\ZumConsole.Form3.resources
-C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Release\ZumConsole.csprojResolveAssemblyReference.cache

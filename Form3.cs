@@ -26,7 +26,13 @@ namespace ZumConsole
         };
         uint CurrentRFchannel = (uint)rfchannels.ALL;
         List<RFData> rfdata = new List<RFData>();
-        TextAnnotation ann = new System.Windows.Forms.DataVisualization.Charting.TextAnnotation();        
+        TextAnnotation ann = new System.Windows.Forms.DataVisualization.Charting.TextAnnotation();
+        String Hostname = String.Empty;
+        Int32 PortNumber = 41795;
+        NetworkStream tcp_stream;
+        NetworkConn net_conn = new NetworkConn();
+        delegate void SetTextCallback(string text);
+        bool tcp_connected = false;
         public Form3()
         {
             InitializeComponent();
@@ -137,5 +143,52 @@ namespace ZumConsole
                 e.Result = 0;// SendScanCommandAndGetResponse(worker, e);
             }
         }
+        private void SetHostNameText(string text)
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread. 
+            // If these threads are different, it returns true.
+            if (this.HostNameLabel.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(SetHostNameText);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                this.HostNameLabel.Text = text;
+            }
+        }
+        private void ConnSettings3_Click(object sender, EventArgs e)
+        {
+            Form2 form2 = new Form2();
+            // Add an event handler to update this form
+            // when the ID form is updated (when IdentityUpdated fires).
+            form2.NetParametersUpdated += new Form2.NetUpdateHandler(Net_Settings_ButtonClicked);
+            form2.Show();
+        }
+        private void Net_Settings_ButtonClicked(object sender, NetUpdateEventArgs e)
+        {
+            // update the forms values from the event args
+            Hostname = e.HostName;
+            String port_str = e.PortName;
+            PortNumber = Convert.ToInt32(port_str, 10);
+            tcp_stream = net_conn.MakeConnection(Hostname, (int)PortNumber);
+            tcp_connected = net_conn.GetTcpConnected();
+            if (tcp_connected)
+            {
+                SetHostNameText(Hostname + ":" + PortNumber);
+            }
+            else
+            {
+                SetHostNameText("Failed to connect to TCP");
+            }
+
+        }
+
+        private void Form3_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            net_conn.CloseConnection();
+        }
+  
     }
 }
