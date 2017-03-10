@@ -13,13 +13,25 @@ namespace ZumConsole
     public partial class Form2 : Form
     {
         // add a delegate
+        /***************** Create event of OK button click **********/
         public delegate void NetUpdateHandler(object sender, NetUpdateEventArgs e);
 
         // add an event of the delegate type
         public event NetUpdateHandler NetParametersUpdated;
+
+
+        /***************** Create event of form closing**********/
+        // add a delegate
+        public delegate void ConnFormClosingHandler(object sender, ConnFormCloseEventArgs e);
+        // add an event of the delegate type on form close
+        public event ConnFormClosingHandler ConnFormClosing;
+        /***********************************************************/        
+        
         int PortNumber = 4900;
         String Hostname = String.Empty; 
  
+
+        
         public Form2()
         {
 
@@ -41,12 +53,44 @@ namespace ZumConsole
 
             // raise the event with the updated arguments
             NetParametersUpdated(this, args);
+            // instance the event args and pass it each value
+            ConnFormCloseEventArgs args1 = new ConnFormCloseEventArgs(0x01);
+            // raise the event with the updated arguments
+            ConnFormClosing(this, args1);
 
             this.Dispose();
 
 
         }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form2_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // instance the event args and pass it each value
+            ConnFormCloseEventArgs args1 = new ConnFormCloseEventArgs(0x01);
+            // raise the event with the updated arguments
+            ConnFormClosing(this, args1);
+        }
     }
+
+    public class ConnFormCloseEventArgs : System.EventArgs
+    {
+        private int mclosed;
+        // class constructor
+        public ConnFormCloseEventArgs(int sclosed)
+        {
+            this.mclosed = sclosed;
+        }
+        public int Closed
+        {
+            get { return mclosed; }
+        }
+    }
+    
     public class NetUpdateEventArgs : System.EventArgs
     {
         // add local member variable to hold text

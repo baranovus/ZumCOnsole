@@ -22,10 +22,7 @@
             {
                 logfile.Close();
             }
-            //if (client != null)
-            //{
-            //    client.Close();
-            //}
+            net_conn.CloseConnection();
             if (scriptfile != null)
             {
                 scriptfile.Close();
@@ -40,6 +37,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.FileOpen = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -276,6 +274,7 @@
             this.Controls.Add(this.Stop);
             this.Controls.Add(this.Start);
             this.Controls.Add(this.FileOpen);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Terminal";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1Closing);

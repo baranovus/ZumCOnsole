@@ -89,6 +89,8 @@
             this.Controls.Add(this.HostName);
             this.Name = "Form2";
             this.Text = "Communication Settings";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form2_FormClosing);
+            this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

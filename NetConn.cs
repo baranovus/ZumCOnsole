@@ -21,24 +21,29 @@ namespace ZumConsole
         private TcpClient client;
         private NetworkStream stream;
         private bool tcp_connected;
-        String Hostname;
-        Int32 Port;
+        private String Hostname;
+        private Int32 Port;
+        private Int32 ConnectionOwner;
         public NetworkConn()
         {
             tcp_connected = false;
             Hostname = String.Empty;
             Port = 0;
+            ConnectionOwner = 0;
         }
         public String GetHostName() { return Hostname; }
         public Int32 GetPort() { return Port; }
+        public Int32 GetOwner() { return ConnectionOwner; }
         public bool GetTcpConnected() { return tcp_connected; }
+        public NetworkStream GetStream() { return stream;}
+
         private bool IsValidIp(string addr)
         {
             IPAddress ip;
             bool valid = !string.IsNullOrEmpty(addr) && IPAddress.TryParse(addr, out ip);
             return valid;
         }
-        public NetworkStream MakeConnection(String Hostname, Int32 Port)
+        public NetworkStream MakeConnection(String Hostname, Int32 Port, Int32 Owner = 1)
         {
             if ((String.IsNullOrEmpty(Hostname)) || (Port == 0))
             {
@@ -52,6 +57,7 @@ namespace ZumConsole
                     IPEndPoint ipLocalEndPoint = new IPEndPoint(ip_address, Port);
                     client = new TcpClient();
                     client.Connect(ipLocalEndPoint);
+                    if (client.Connected) { tcp_connected = true; }
 
                 }
                 else
@@ -75,6 +81,7 @@ namespace ZumConsole
                     ZumConsole.Properties.Settings.Default.Hostname = Hostname;
                     ZumConsole.Properties.Settings.Default.Port = Port;
                     ZumConsole.Properties.Settings.Default.Save();
+                    ConnectionOwner = Owner;
                 }
                 catch (SocketException e5)
                 {
@@ -84,10 +91,17 @@ namespace ZumConsole
             else { stream = null; }
             return (stream);
         }
-        public void CloseConnection()
+        public void CloseConnection(Int32 Owner = 1)
         {
-            client.Close();
-
+            if (Owner == ConnectionOwner)
+            {
+                if ((client != null) && (client.Connected))
+                {
+                    client.Close();
+                    ConnectionOwner = 0;
+                    tcp_connected = false;
+                }
+            }
         }
     }
 }

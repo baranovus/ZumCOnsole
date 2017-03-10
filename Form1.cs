@@ -44,6 +44,8 @@ namespace ZumConsole
         bool log_file_created = false;
         bool append_crlf = true;
         bool save_ascii = true;
+ 
+ 
         public Form1()
         {
             InitializeComponent();
@@ -61,7 +63,9 @@ namespace ZumConsole
             saveFileDialog1.Title = "Save Log File";
             ascii.Checked = true;
             hex.Checked = false;
-            
+//            GlobalVars.SetGlobal("ababa");
+            SingleGlobal singleton = SingleGlobal.Instance;
+            singleton.SetGlobal("vvvv");
 
   
         }
@@ -276,24 +280,24 @@ namespace ZumConsole
             }
             return 0;
         }
-        private int WaitForResponseFromTCP()
-        {
-            int nTry = 1000;
-            Int32 res = -1;
-            while (!tcp_stream.DataAvailable)
-            {
-                Thread.Sleep(5);
-                if (--nTry == 0)
-                {
-                    break;
-                }
-            }
-            if (nTry > 0)
-            {
-                res = 0;
-            }
-            return res;
-        } 
+        //private int WaitForResponseFromTCP()
+        //{
+        //    int nTry = 1000;
+        //    Int32 res = -1;
+        //    while (!tcp_stream.DataAvailable)
+        //    {
+        //        Thread.Sleep(5);
+        //        if (--nTry == 0)
+        //        {
+        //            break;
+        //        }
+        //    }
+        //    if (nTry > 0)
+        //    {
+        //        res = 0;
+        //    }
+        //    return res;
+        //} 
         private void SendStringToTCP(ref String s_tx, ref String s_rx, int timeout = 150/*miliseconds*/)
         {
             if ((s_rx == null) || (s_tx == null)) { return; }
@@ -304,7 +308,6 @@ namespace ZumConsole
             if (log_file_created)
             {
                 logfile.WriteLine(Timestamp);   //log timestamp and console command
-//                logfile.WriteLine(s_tx);
             }
             Byte[] data = System.Text.Encoding.ASCII.GetBytes(s_tx);    //send console command
             try
@@ -328,14 +331,12 @@ namespace ZumConsole
             }
             if (timeout > 0)                                            //if response is expected timeout is non-zero
             {
-                Thread.Sleep(timeout);
-                if (WaitForResponseFromTCP() == 0)      //if there is some response
+                UInt16 nTry = 600;
+                for (; ; )
                 {
-                    do
+                    if (tcp_stream.DataAvailable)
                     {
-                        //tcp_rx_bytes += tcp_stream.Read(rxbuffer, index, rxbuffer.Length);
-                        //index = tcp_rx_bytes;
-                        //if (tcp_rx_bytes >= rxbuffer.Length) break;
+                        nTry = 600;
                         tcp_rx_bytes = tcp_stream.Read(rxbuffer, index, rxbuffer.Length);
                         if (!save_ascii)
                         {
@@ -351,15 +352,14 @@ namespace ZumConsole
                         {
                             logfile.WriteLine(s_rx);
                             if (!save_ascii) { logfile.WriteLine("\r\n"); }
-                        }                      //and write to log file
-
+                        }
                     }
-                    while (tcp_stream.DataAvailable);
-                   
-                    //s_rx = System.Text.Encoding.ASCII.GetString(rxbuffer, 0, tcp_rx_bytes); //convert response to text
-                    //SetConsoleText(s_rx);                                                   //print at the text window
-                    //if (log_file_created) { logfile.WriteLine(s_rx); }                      //and write to log file
-                    //Thread.Sleep(10);
+                    else
+                    {
+                         Thread.Sleep(10);
+                         nTry--;
+                         if (nTry == 0) { break; }
+                    }
                 }
             }
         }
@@ -410,17 +410,24 @@ namespace ZumConsole
             ZumConsole.Properties.Settings.Default.Hostname = net_conn.GetHostName();
             ZumConsole.Properties.Settings.Default.Port = net_conn.GetPort();
             ZumConsole.Properties.Settings.Default.LogFile = log_file_path_str;
-            net_conn.CloseConnection();
         }
 
   
         private void ConnSettings_Click_1(object sender, EventArgs e)
         {
             Form2 form2 = new Form2();
+            ConnSettings.Enabled = false;
             // Add an event handler to update this form
             // when the ID form is updated (when IdentityUpdated fires).
             form2.NetParametersUpdated += new Form2.NetUpdateHandler(Net_Settings_ButtonClicked);
+            form2.ConnFormClosing += new Form2.ConnFormClosingHandler(ConnFormClosed);
             form2.Show();
+        }
+
+        private void ConnFormClosed(object sender, ConnFormCloseEventArgs e)
+        {
+            ConnSettings.Enabled = true;
+
         }
         // handles the event from form2
         private void Net_Settings_ButtonClicked(object sender, NetUpdateEventArgs e)
@@ -569,11 +576,17 @@ namespace ZumConsole
         private void Energyscan_Click(object sender, EventArgs e)
         {
             Form3 form3 = new Form3();
+            Energyscan.Enabled = false;
 
+
+            form3.ScanFormClosing += new Form3.ScanFormClosingHandler(ScanFormClosed);
             form3.Show();
         }
-
- 
+        private void ScanFormClosed(object sender, ScanFormCloseEventArgs e)
+        {
+            Energyscan.Enabled = true;
+        
+        }
  
     }
 }
