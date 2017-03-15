@@ -88,7 +88,7 @@
             this.RFChannelBox.Location = new System.Drawing.Point(20, 151);
             this.RFChannelBox.Name = "RFChannelBox";
             this.RFChannelBox.Size = new System.Drawing.Size(135, 21);
-            this.RFChannelBox.TabIndex = 1;
+            this.RFChannelBox.TabIndex = 0;
             this.RFChannelBox.SelectedIndexChanged += new System.EventHandler(this.RFChannelBox_SelectedIndexChanged);
             // 
             // RF_channel_label
@@ -125,18 +125,16 @@
             this.HostNameLabel.AutoSize = true;
             this.HostNameLabel.Location = new System.Drawing.Point(28, 65);
             this.HostNameLabel.Name = "HostNameLabel";
-            this.HostNameLabel.Size = new System.Drawing.Size(35, 13);
+            this.HostNameLabel.Size = new System.Drawing.Size(0, 13);
             this.HostNameLabel.TabIndex = 5;
-            this.HostNameLabel.Text = "label1";
             // 
             // DiagLabel
             // 
             this.DiagLabel.AutoSize = true;
             this.DiagLabel.Location = new System.Drawing.Point(27, 320);
             this.DiagLabel.Name = "DiagLabel";
-            this.DiagLabel.Size = new System.Drawing.Size(35, 13);
+            this.DiagLabel.Size = new System.Drawing.Size(0, 13);
             this.DiagLabel.TabIndex = 6;
-            this.DiagLabel.Text = "label1";
             // 
             // Form3
             // 

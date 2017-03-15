@@ -24,19 +24,21 @@ namespace ZumConsole
             CH17 = 17, CH18 = 18, CH19 = 19, CH20 = 20, CH21 = 21, CH22 = 22,
             CH23 = 23, CH24 = 24, CH25 = 25, CH26 = 26
         };
+        Int32 Form3NeworkConnectionOwner = 3;
         uint CurrentRFchannel = (uint)rfchannels.ALL;
+  
         List<RFData> rfdata = new List<RFData>();
         TextAnnotation ann = new System.Windows.Forms.DataVisualization.Charting.TextAnnotation();
         String Hostname = String.Empty;
         Int32 PortNumber = 41795;
         NetworkStream tcp_stream;
-        NetworkConn net_conn = new NetworkConn();
+
+        NetworkConn net_conn = NetworkConn.Instance;    //getting instance of NetworkConn singleton class
+
         delegate void SetTextCallback(string text);
  /***************** Create event of form closing**********/
-        // add a delegate
         public delegate void ScanFormClosingHandler(object sender, ScanFormCloseEventArgs e);
-        // add an event of the delegate type on form close
-        public event ScanFormClosingHandler ScanFormClosing;
+        public event ScanFormClosingHandler ScanFormClosing;        // add an event of the delegate type on form close
 /***********************************************************/
         bool tcp_connected = false;
         private String tcpresponse = String.Empty;
@@ -51,6 +53,7 @@ namespace ZumConsole
             backgroundWorker2.DoWork += new DoWorkEventHandler(backgroundWorker2_DoWork);
             this.backgroundWorker2.WorkerReportsProgress = true;
             this.backgroundWorker2.WorkerSupportsCancellation = true;
+            this.RFChannelBox.SelectedIndex = 0;
             DataInitialize();
             ChartInitialize();
             ChartCustomize();
@@ -100,6 +103,7 @@ namespace ZumConsole
             ann.Y = 22;
             ann.Visible = false;
             chart1.Annotations.Add(ann);
+
  /******** Singleton proba
             SingleGlobal singleton = SingleGlobal.Instance;
             string vvv = singleton.GetGlobal();
@@ -209,20 +213,30 @@ namespace ZumConsole
         private void Net_Settings_ButtonClicked(object sender, NetUpdateEventArgs e)
         {
             // update the forms values from the event args
-            Hostname = e.HostName;
-            String port_str = e.PortName;
-            PortNumber = Convert.ToInt32(port_str, 10);
-            tcp_stream = net_conn.MakeConnection(Hostname, (int)PortNumber);
-            tcp_connected = net_conn.GetTcpConnected();
-            if (tcp_connected)
+            
+            if (!net_conn.GetTcpConnected())
             {
-                SetHostNameText(Hostname + ":" + PortNumber);
+                Hostname = e.HostName;
+                String port_str = e.PortName;
+                PortNumber = Convert.ToInt32(port_str, 10);
+                tcp_stream = net_conn.MakeConnection(Hostname, (int)PortNumber, Form3NeworkConnectionOwner);
+                if (net_conn.GetTcpConnected())
+                {
+                    SetHostNameText(Hostname + ":" + PortNumber);
+                }
+                else
+                {
+                    SetHostNameText("Failed to connect to TCP");
+                }
             }
             else
             {
-                SetHostNameText("Failed to connect to TCP");
+                tcp_stream = net_conn.GetStream();
+                Hostname = net_conn.GetHostName();
+                PortNumber = net_conn.GetPort();
+                SetHostNameText(Hostname + ":" + PortNumber);
             }
-
+            tcp_connected = net_conn.GetTcpConnected();
         }
 
         private int SendScanCommandAndGetResponse(BackgroundWorker worker, DoWorkEventArgs e)
@@ -366,6 +380,13 @@ namespace ZumConsole
             ScanFormCloseEventArgs args = new ScanFormCloseEventArgs(0x01);
            // raise the event with the updated arguments
             ScanFormClosing(this, args);
+            if(net_conn.GetTcpConnected())
+            {
+                if(net_conn.IsMyConnection(Form3NeworkConnectionOwner))
+                {
+                    net_conn.CloseConnection(Form3NeworkConnectionOwner);
+                }
+            }
         }
 
         private void RFChannelBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -403,7 +424,7 @@ namespace ZumConsole
             }
             else
             {
-                SetDiagText("TCP connection is not established");
+                SetHostNameText("TCP connection is not established");
             }
  
         }

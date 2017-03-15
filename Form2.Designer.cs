@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             this.HostName = new System.Windows.Forms.TextBox();
             this.PortName = new System.Windows.Forms.TextBox();
             this.IP_addr_label = new System.Windows.Forms.Label();
@@ -87,6 +88,7 @@
             this.Controls.Add(this.IP_addr_label);
             this.Controls.Add(this.PortName);
             this.Controls.Add(this.HostName);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form2";
             this.Text = "Communication Settings";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form2_FormClosing);

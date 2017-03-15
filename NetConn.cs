@@ -16,8 +16,14 @@ using ZumConsole.Properties;
 
 namespace ZumConsole
 {
-    public class NetworkConn
+ /* Singleton class for network connection. It is used for connecting different forms to Control System TCP/IP console.
+  It is said that Control system console supports a limited (up to 5) number of console connections, thus forms
+  will share one connection. They will not be able to make transactions simultaneously.
+  */ 
+    public sealed class NetworkConn
     {
+        private static NetworkConn instance = null;
+        private static readonly object padlock = new object();
         private TcpClient client;
         private NetworkStream stream;
         private bool tcp_connected;
@@ -29,14 +35,33 @@ namespace ZumConsole
             tcp_connected = false;
             Hostname = String.Empty;
             Port = 0;
-            ConnectionOwner = 0;
+            ConnectionOwner = -1;
         }
+        public static NetworkConn Instance
+        {
+            get
+            {
+                lock (padlock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new NetworkConn();
+                    }
+                    return instance;
+                }
+            }
+        }
+        
+        
         public String GetHostName() { return Hostname; }
         public Int32 GetPort() { return Port; }
         public Int32 GetOwner() { return ConnectionOwner; }
         public bool GetTcpConnected() { return tcp_connected; }
         public NetworkStream GetStream() { return stream;}
-
+        public bool IsMyConnection(Int32 owner)
+        {
+            return (owner == ConnectionOwner);
+        }
         private bool IsValidIp(string addr)
         {
             IPAddress ip;
@@ -77,11 +102,9 @@ namespace ZumConsole
                 try
                 {
                     stream = client.GetStream();
-                    tcp_connected = true;
-                    ZumConsole.Properties.Settings.Default.Hostname = Hostname;
-                    ZumConsole.Properties.Settings.Default.Port = Port;
-                    ZumConsole.Properties.Settings.Default.Save();
                     ConnectionOwner = Owner;
+                    this.Hostname = Hostname;
+                    this.Port = Port;
                 }
                 catch (SocketException e5)
                 {

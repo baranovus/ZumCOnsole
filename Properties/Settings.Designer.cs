@@ -37,7 +37,6 @@ namespace ZumConsole.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4900")]
         public int Port {
             get {
                 return ((int)(this["Port"]));

@@ -32,10 +32,10 @@ namespace ZumConsole
         String inputline = String.Empty;
         static String port_str = String.Empty;
         Int32 PortNumber = 41795;
-//        TcpClient client;
+        Int32 Form1NeworkConnectionOwner = 1;
         NetworkStream tcp_stream;
         delegate void SetTextCallback(string text);
-        NetworkConn net_conn = new NetworkConn();
+        NetworkConn net_conn = NetworkConn.Instance;    //getting instance of NetworkConn singleton class
         private String tcpresponse = String.Empty;
         private byte[] txbuffer = new byte[2000];           //transmit buffer for tcp
         private byte[] rxbuffer = new byte[5000];           //receive buffer for tcp
@@ -59,13 +59,20 @@ namespace ZumConsole
             backgroundWorker1.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker1_ProgressChanged);
             this.backgroundWorker1.WorkerReportsProgress = true;
             this.backgroundWorker1.WorkerSupportsCancellation = true;
+
+            backgroundWorker2.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker2_RunWorkerCompleted);
+            backgroundWorker2.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker2_ProgressChanged);
+            backgroundWorker2.DoWork += new DoWorkEventHandler(backgroundWorker2_DoWork);
+            this.backgroundWorker2.WorkerReportsProgress = true;
+            this.backgroundWorker2.WorkerSupportsCancellation = true;
+            
             saveFileDialog1.Filter = "Text file|*.txt";
             saveFileDialog1.Title = "Save Log File";
             ascii.Checked = true;
             hex.Checked = false;
 //            GlobalVars.SetGlobal("ababa");
-            SingleGlobal singleton = SingleGlobal.Instance;
-            singleton.SetGlobal("vvvv");
+            //SingleGlobal singleton = SingleGlobal.Instance;
+            //singleton.SetGlobal("vvvv");
 
   
         }
@@ -269,7 +276,7 @@ namespace ZumConsole
                     if (scriptline.Length > 0)
                     {
                         scriptline += "\n\r";
-                        SendStringToTCP(ref scriptline, ref tcpresponse, 500);
+                        SendStringToTCP(scriptline, tcpresponse, 500);
                         Thread.Sleep(2000);
                     }
                     if (scriptfile.EndOfStream)                     //if it is the end of the file
@@ -298,18 +305,17 @@ namespace ZumConsole
         //    }
         //    return res;
         //} 
-        private void SendStringToTCP(ref String s_tx, ref String s_rx, int timeout = 150/*miliseconds*/)
+        private int SendStringToTCP(String s_tx, String s_rx, int timeout = 150/*miliseconds*/)
         {
-            if ((s_rx == null) || (s_tx == null)) { return; }
-            int index = 0;
+            if ((s_rx == null) || (s_tx == null)) { return -1; }
             int tcp_rx_bytes = 0;
-            s_rx = String.Empty;
-            Timestamp = DateTime.Now.ToString();
+             Timestamp = DateTime.Now.ToString();
             if (log_file_created)
             {
                 logfile.WriteLine(Timestamp);   //log timestamp and console command
             }
             Byte[] data = System.Text.Encoding.ASCII.GetBytes(s_tx);    //send console command
+            tcp_stream.Flush();
             try
             {
                 tcp_stream.Write(data, 0, data.Length);                     //to TCP stream
@@ -329,15 +335,18 @@ namespace ZumConsole
 
                  SetDiagText("Server is busy");
             }
+
             if (timeout > 0)                                            //if response is expected timeout is non-zero
             {
                 UInt16 nTry = 600;
-                for (; ; )
+                 for (; ; )
                 {
                     if (tcp_stream.DataAvailable)
                     {
                         nTry = 600;
-                        tcp_rx_bytes = tcp_stream.Read(rxbuffer, index, rxbuffer.Length);
+                        rxbuffer.Initialize();
+                        tcp_rx_bytes = tcp_stream.Read(rxbuffer, 0, rxbuffer.Length);                                              //(rxbuffer, index, rxbuffer.Length);
+                        
                         if (!save_ascii)
                         {
                             s_rx = ByteArrayToHexString(rxbuffer, 0, tcp_rx_bytes);
@@ -347,6 +356,7 @@ namespace ZumConsole
                             s_rx = System.Text.Encoding.ASCII.GetString(rxbuffer, 0, tcp_rx_bytes); //convert response to text
                         }
                         SetConsoleText(s_rx);
+                       
                         if (!save_ascii) { SetConsoleText("\r\n"); }
                         if (log_file_created)
                         {
@@ -356,21 +366,31 @@ namespace ZumConsole
                     }
                     else
                     {
-                         Thread.Sleep(10);
+                         Thread.Sleep(1);
                          nTry--;
                          if (nTry == 0) { break; }
                     }
                 }
             }
+            return 0;
         }
         
         private void Start_Click(object sender, EventArgs e)
         {
             if( (script_file_opened)&&(tcp_connected)&&(log_file_created))
-            { 
-                this.backgroundWorker1.RunWorkerAsync();
-                Stop.Enabled = true;
-                Start.Enabled = false;
+            {
+                int nTry = 600;
+                while (this.backgroundWorker1.IsBusy)
+                {
+                    nTry--;
+                    Application.DoEvents();
+                }
+                if (nTry > 0)
+                {
+                    this.backgroundWorker1.RunWorkerAsync();
+                    Stop.Enabled = true;
+                    Start.Enabled = false;
+                }
             }
             else
             {
@@ -407,9 +427,10 @@ namespace ZumConsole
         {
             // The form is closing, save the user's preferences
             // Close everything.
-            ZumConsole.Properties.Settings.Default.Hostname = net_conn.GetHostName();
-            ZumConsole.Properties.Settings.Default.Port = net_conn.GetPort();
+            //ZumConsole.Properties.Settings.Default.Hostname = net_conn.GetHostName();
+            //ZumConsole.Properties.Settings.Default.Port = net_conn.GetPort();
             ZumConsole.Properties.Settings.Default.LogFile = log_file_path_str;
+            ZumConsole.Properties.Settings.Default.Save();
         }
 
   
@@ -435,8 +456,8 @@ namespace ZumConsole
             // update the forms values from the event args
             Hostname =  e.HostName;
             port_str = e.PortName;
-            PortNumber = Convert.ToUInt16(port_str, 10);
-            tcp_stream = net_conn.MakeConnection(Hostname, (int)PortNumber);
+            PortNumber = Convert.ToInt32(port_str, 10);
+            tcp_stream = net_conn.MakeConnection(Hostname, (int)PortNumber, Form1NeworkConnectionOwner);
             tcp_connected = net_conn.GetTcpConnected();
             if(tcp_connected)
             {
@@ -495,37 +516,40 @@ namespace ZumConsole
 
         }
 
-        //private bool IsValidIp(string addr)
-        //{
-        //    IPAddress ip;
-        //    bool valid = !string.IsNullOrEmpty(addr) && IPAddress.TryParse(addr, out ip);
-        //    return valid;
-        //}
-
+ 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             inputline = textBox1.Text;
-            int crlf1 = inputline.IndexOf("\n\r");
-            int crlf2 = inputline.IndexOf("\r\n");            
+            int crlf1 = inputline.IndexOf(Environment.NewLine); //strip of \n\r
             if (crlf1 >= 0)
             {
                 inputline = inputline.Substring(0, crlf1);
-            }
-            if (crlf2 >= 0)
-            {
-                inputline = inputline.Substring(0, crlf2);
             }
         }
 
         private void SensConsCommand_Click(object sender, EventArgs e)
         {
+            int nTry = 600;
             if (tcp_connected)
             {
                 if (append_crlf)
-                { 
-                    inputline += "\n\r";
+                {
+                    int crlf1 = inputline.IndexOf(Environment.NewLine);
+                    if (crlf1 < 0) { inputline += Environment.NewLine; }
                 }
-                SendStringToTCP(ref inputline, ref tcpresponse, 500);
+                while (this.backgroundWorker2.IsBusy)
+                {
+                    nTry--;
+                    Application.DoEvents();
+                }
+                if (nTry > 0)
+                {
+                    this.backgroundWorker2.RunWorkerAsync();
+                }
+            }
+            else
+            {
+                SetHostNameText("No network connection");
             }
         }
 
@@ -586,6 +610,31 @@ namespace ZumConsole
         {
             Energyscan.Enabled = true;
         
+        }
+
+        private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+  
+        }
+
+        private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            //            this.resultLabel.Text = e.ProgressPercentage.ToString();
+        }
+        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            if (worker.CancellationPending == true)
+            {
+                e.Cancel = true;
+
+            }
+            else
+            {
+                tcpresponse = String.Empty;
+                e.Result = SendStringToTCP(inputline, tcpresponse, 500);
+                this.backgroundWorker2.CancelAsync();
+            }
         }
  
     }

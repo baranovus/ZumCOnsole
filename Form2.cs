@@ -12,19 +12,15 @@ namespace ZumConsole
 {
     public partial class Form2 : Form
     {
-        // add a delegate
+ 
         /***************** Create event of OK button click **********/
         public delegate void NetUpdateHandler(object sender, NetUpdateEventArgs e);
-
-        // add an event of the delegate type
-        public event NetUpdateHandler NetParametersUpdated;
-
+        public event NetUpdateHandler NetParametersUpdated;        // add an event of the delegate type
+        /****************************************************************/
 
         /***************** Create event of form closing**********/
-        // add a delegate
-        public delegate void ConnFormClosingHandler(object sender, ConnFormCloseEventArgs e);
-        // add an event of the delegate type on form close
-        public event ConnFormClosingHandler ConnFormClosing;
+         public delegate void ConnFormClosingHandler(object sender, ConnFormCloseEventArgs e);
+         public event ConnFormClosingHandler ConnFormClosing;       // add an event of the delegate type on form close
         /***********************************************************/        
         
         int PortNumber = 4900;
@@ -39,24 +35,36 @@ namespace ZumConsole
             PortNumber = ZumConsole.Properties.Settings.Default.Port;
             PortName.Text = "" + PortNumber;
             HostName.Text = ZumConsole.Properties.Settings.Default.Hostname;
+
+
         }
 
         private void Set_Click(object sender, EventArgs e)
         {
             string sNewHost = HostName.Text;
             string sNewPort = PortName.Text;
-  
+            Int32 sPort_num = 0;
+            try {
+                sPort_num = Convert.ToInt32(sNewPort);
+            }
+            catch (FormatException e1)
+            {
+                sNewPort = "0";
+                sPort_num = 0;
+            }
+            ZumConsole.Properties.Settings.Default.Hostname = HostName.Text;
+            ZumConsole.Properties.Settings.Default.Port = sPort_num;
+            ZumConsole.Properties.Settings.Default.Save();
 
-            // instance the event args and pass it each value
-            NetUpdateEventArgs args = new NetUpdateEventArgs(sNewHost,
-                sNewPort);
-
-            // raise the event with the updated arguments
+            /******Raise the event when OK button is pressed**********/
+             NetUpdateEventArgs args = new NetUpdateEventArgs(sNewHost, sNewPort);
             NetParametersUpdated(this, args);
-            // instance the event args and pass it each value
+            /****************************************************/
+
+            /******Raise the event of Form disposal **********/
             ConnFormCloseEventArgs args1 = new ConnFormCloseEventArgs(0x01);
-            // raise the event with the updated arguments
             ConnFormClosing(this, args1);
+             /****************************************************/
 
             this.Dispose();
 
@@ -70,10 +78,14 @@ namespace ZumConsole
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // instance the event args and pass it each value
+            ZumConsole.Properties.Settings.Default.Hostname = HostName.Text;
+            ZumConsole.Properties.Settings.Default.Port = PortNumber;
+            ZumConsole.Properties.Settings.Default.Save();
+ 
+            /******Raise the event when Form is closed **********/
             ConnFormCloseEventArgs args1 = new ConnFormCloseEventArgs(0x01);
-            // raise the event with the updated arguments
-            ConnFormClosing(this, args1);
+             ConnFormClosing(this, args1);
+            /****************************************************/
         }
     }
 

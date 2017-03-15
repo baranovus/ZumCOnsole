@@ -59,6 +59,7 @@
             this.ascii = new System.Windows.Forms.RadioButton();
             this.hex = new System.Windows.Forms.RadioButton();
             this.Energyscan = new System.Windows.Forms.Button();
+            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -103,18 +104,19 @@
             // 
             this.ConsOutput.AcceptsTab = true;
             this.ConsOutput.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ConsOutput.Location = new System.Drawing.Point(12, 64);
+            this.ConsOutput.Location = new System.Drawing.Point(12, 99);
             this.ConsOutput.Name = "ConsOutput";
-            this.ConsOutput.Size = new System.Drawing.Size(685, 456);
+            this.ConsOutput.Size = new System.Drawing.Size(685, 421);
             this.ConsOutput.TabIndex = 7;
             this.ConsOutput.Text = "";
             // 
             // DiagLabel
             // 
             this.DiagLabel.AutoSize = true;
-            this.DiagLabel.Location = new System.Drawing.Point(50, 586);
+            this.DiagLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.DiagLabel.Location = new System.Drawing.Point(53, 625);
             this.DiagLabel.Name = "DiagLabel";
-            this.DiagLabel.Size = new System.Drawing.Size(0, 13);
+            this.DiagLabel.Size = new System.Drawing.Size(2, 15);
             this.DiagLabel.TabIndex = 13;
             // 
             // Log_button
@@ -171,9 +173,11 @@
             // HostNameLabel
             // 
             this.HostNameLabel.AutoSize = true;
-            this.HostNameLabel.Location = new System.Drawing.Point(20, 587);
+            this.HostNameLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.HostNameLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.HostNameLabel.Location = new System.Drawing.Point(12, 66);
             this.HostNameLabel.Name = "HostNameLabel";
-            this.HostNameLabel.Size = new System.Drawing.Size(0, 13);
+            this.HostNameLabel.Size = new System.Drawing.Size(2, 15);
             this.HostNameLabel.TabIndex = 19;
             // 
             // AppendCRLF
@@ -251,11 +255,15 @@
             this.Energyscan.UseVisualStyleBackColor = true;
             this.Energyscan.Click += new System.EventHandler(this.Energyscan_Click);
             // 
+            // backgroundWorker2
+            // 
+            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(777, 624);
+            this.ClientSize = new System.Drawing.Size(905, 610);
             this.Controls.Add(this.Energyscan);
             this.Controls.Add(this.hex);
             this.Controls.Add(this.ascii);
@@ -307,6 +315,7 @@
         private System.Windows.Forms.RadioButton ascii;
         private System.Windows.Forms.RadioButton hex;
         private System.Windows.Forms.Button Energyscan;
+        private System.ComponentModel.BackgroundWorker backgroundWorker2;
      }
 }
 
