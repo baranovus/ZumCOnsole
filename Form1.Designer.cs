@@ -113,10 +113,9 @@
             // DiagLabel
             // 
             this.DiagLabel.AutoSize = true;
-            this.DiagLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.DiagLabel.Location = new System.Drawing.Point(53, 625);
+            this.DiagLabel.Location = new System.Drawing.Point(53, 580);
             this.DiagLabel.Name = "DiagLabel";
-            this.DiagLabel.Size = new System.Drawing.Size(2, 15);
+            this.DiagLabel.Size = new System.Drawing.Size(0, 13);
             this.DiagLabel.TabIndex = 13;
             // 
             // Log_button
@@ -174,10 +173,9 @@
             // 
             this.HostNameLabel.AutoSize = true;
             this.HostNameLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.HostNameLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.HostNameLabel.Location = new System.Drawing.Point(12, 66);
             this.HostNameLabel.Name = "HostNameLabel";
-            this.HostNameLabel.Size = new System.Drawing.Size(2, 15);
+            this.HostNameLabel.Size = new System.Drawing.Size(0, 13);
             this.HostNameLabel.TabIndex = 19;
             // 
             // AppendCRLF
@@ -263,7 +261,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(905, 610);
+            this.ClientSize = new System.Drawing.Size(905, 724);
             this.Controls.Add(this.Energyscan);
             this.Controls.Add(this.hex);
             this.Controls.Add(this.ascii);

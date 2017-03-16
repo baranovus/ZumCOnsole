@@ -36,10 +36,17 @@ namespace ZumConsole
         NetworkConn net_conn = NetworkConn.Instance;    //getting instance of NetworkConn singleton class
 
         delegate void SetTextCallback(string text);
- /***************** Create event of form closing**********/
+/******************* Create event of form closing**********/
         public delegate void ScanFormClosingHandler(object sender, ScanFormCloseEventArgs e);
         public event ScanFormClosingHandler ScanFormClosing;        // add an event of the delegate type on form close
 /***********************************************************/
+
+/******************* Create event of Scan start or stop **********/
+        public delegate void ScanStartStopHandler(object sender, ScanStartStopEventArgs e);
+        public event ScanStartStopHandler ScanStartStop;        // add an event of the delegate type on form close
+/***********************************************************/
+
+        
         bool tcp_connected = false;
         private String tcpresponse = String.Empty;
         private byte[] txbuffer = new byte[2000];           //transmit buffer for tcp
@@ -120,7 +127,7 @@ namespace ZumConsole
         }
         private void ChartUpdate()
         {
-             chart1.Series["Average"].Points.Clear();
+            chart1.Series["Average"].Points.Clear();
             chart1.Series["Peak"].Points.Clear();
             foreach (RFData p in rfdata)
             {
@@ -143,6 +150,11 @@ namespace ZumConsole
         {
             ann.Visible = false;
             ScanButton.Enabled = true;
+/********* Send Stop Scan event (argument 0) to enable "SEND" button in Form1*/ 
+            ScanStartStopEventArgs args = new ScanStartStopEventArgs(0);
+            ScanStartStop(this, args);
+/*************************************************************************/
+
             ParseRxString();
         }
 
@@ -421,6 +433,10 @@ namespace ZumConsole
                 this.backgroundWorker2.RunWorkerAsync();
                 ScanButton.Enabled = false;
                 ann.Visible = true;
+/********* Send Start Scan event (argument 1) to disable "SEND" button in Form1*/ 
+                ScanStartStopEventArgs args = new ScanStartStopEventArgs(0x01);
+                ScanStartStop(this, args);
+/******************************************************************************/
             }
             else
             {
@@ -429,10 +445,12 @@ namespace ZumConsole
  
         }
      }
+
+ /******* Event argument classes *****************************/
+   
     public class ScanFormCloseEventArgs : System.EventArgs
     {
         private int mclosed;
-        // class constructor
         public ScanFormCloseEventArgs(int sclosed)
         {
             this.mclosed = sclosed;
@@ -442,4 +460,19 @@ namespace ZumConsole
             get { return mclosed; }
         }
     }
+
+    public class ScanStartStopEventArgs : System.EventArgs
+    {
+        private int mstarted;
+         public ScanStartStopEventArgs(int sstarted)
+        {
+            this.mstarted = sstarted;
+        }
+        public int Started
+        {
+            get { return mstarted; }
+        }
+
+     }
+ 
 }

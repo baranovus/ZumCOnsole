@@ -287,35 +287,37 @@ namespace ZumConsole
             }
             return 0;
         }
-        //private int WaitForResponseFromTCP()
-        //{
-        //    int nTry = 1000;
-        //    Int32 res = -1;
-        //    while (!tcp_stream.DataAvailable)
-        //    {
-        //        Thread.Sleep(5);
-        //        if (--nTry == 0)
-        //        {
-        //            break;
-        //        }
-        //    }
-        //    if (nTry > 0)
-        //    {
-        //        res = 0;
-        //    }
-        //    return res;
-        //} 
+        private int WaitForResponseFromTCP()
+        {
+            int nTry = 1000;
+            Int32 res = -1;
+            while (!tcp_stream.DataAvailable)
+            {
+                Thread.Sleep(5);
+                if (--nTry == 0)
+                {
+                    break;
+                }
+            }
+            if (nTry > 0)
+            {
+                res = 0;
+            }
+            return res;
+        } 
+   
+
         private int SendStringToTCP(String s_tx, String s_rx, int timeout = 150/*miliseconds*/)
         {
             if ((s_rx == null) || (s_tx == null)) { return -1; }
             int tcp_rx_bytes = 0;
-             Timestamp = DateTime.Now.ToString();
             if (log_file_created)
-            {
+            { 
+                Timestamp = DateTime.Now.ToString();
                 logfile.WriteLine(Timestamp);   //log timestamp and console command
             }
             Byte[] data = System.Text.Encoding.ASCII.GetBytes(s_tx);    //send console command
-            tcp_stream.Flush();
+ 
             try
             {
                 tcp_stream.Write(data, 0, data.Length);                     //to TCP stream
@@ -335,18 +337,64 @@ namespace ZumConsole
 
                  SetDiagText("Server is busy");
             }
-
+            if(WaitForResponseFromTCP() == 0)
+            {
+                Thread.Sleep(5);
+            }
+            else
+            {
+                this.backgroundWorker2.CancelAsync();
+                return -1;
+            }
             if (timeout > 0)                                            //if response is expected timeout is non-zero
             {
-                UInt16 nTry = 600;
-                 for (; ; )
+                Thread.Sleep(timeout);
+                //UInt16 nTry = 600;
+                //for (; ; )
+                //{
+                //    if (tcp_stream.DataAvailable)
+                //    {
+                //        nTry = 10;
+                //        rxbuffer.Initialize();
+                //        tcp_rx_bytes = tcp_stream.Read(rxbuffer, 0, rxbuffer.Length);                                              //(rxbuffer, index, rxbuffer.Length);
+                        
+                //        if (!save_ascii)
+                //        {
+                //            s_rx = ByteArrayToHexString(rxbuffer, 0, tcp_rx_bytes);
+                //        }
+                //        else
+                //        {
+                //            s_rx = System.Text.Encoding.ASCII.GetString(rxbuffer, 0, tcp_rx_bytes); //convert response to text
+                //        }
+                //        SetConsoleText(s_rx);
+                       
+                //        if (!save_ascii) { SetConsoleText("\r\n"); }
+                //        if (log_file_created)
+                //        {
+                //            logfile.WriteLine(s_rx);
+                //            if (!save_ascii) { logfile.WriteLine("\r\n"); }
+                //        }
+                //    }
+                //    else
+                //    {
+                //         Thread.Sleep(1);
+                //         nTry--;
+                //         if (nTry == 0)
+                //         {
+                //             SetHostNameText("No response from stream");
+                //             break;
+                //         }
+                //    }
+                //}
+                int nTry = 20;
+                while(nTry > 0)
                 {
                     if (tcp_stream.DataAvailable)
                     {
-                        nTry = 600;
-                        rxbuffer.Initialize();
+//                        SetDiagText("nTry = " + nTry);
+                        nTry = 20;
                         tcp_rx_bytes = tcp_stream.Read(rxbuffer, 0, rxbuffer.Length);                                              //(rxbuffer, index, rxbuffer.Length);
-                        
+
                         if (!save_ascii)
                         {
                             s_rx = ByteArrayToHexString(rxbuffer, 0, tcp_rx_bytes);
@@ -356,7 +404,7 @@ namespace ZumConsole
                             s_rx = System.Text.Encoding.ASCII.GetString(rxbuffer, 0, tcp_rx_bytes); //convert response to text
                         }
                         SetConsoleText(s_rx);
-                       
+
                         if (!save_ascii) { SetConsoleText("\r\n"); }
                         if (log_file_created)
                         {
@@ -366,12 +414,13 @@ namespace ZumConsole
                     }
                     else
                     {
-                         Thread.Sleep(1);
-                         nTry--;
-                         if (nTry == 0) { break; }
+                        nTry--;
+                        Thread.Sleep(50);
                     }
                 }
+ //               if (nTry == 0) { SetDiagText("stream is empty"); }
             }
+            this.backgroundWorker2.CancelAsync();
             return 0;
         }
         
@@ -467,52 +516,6 @@ namespace ZumConsole
             {
                 SetHostNameText("Failed to connect to TCP");
             }
-            //if ((String.IsNullOrEmpty(Hostname)) || (PortNumber == 0))
-            //{
-            //    SetDiagText("No host name or Port defined");
-            //    return;
-            //}
-            //try
-            //{
-            //    if (IsValidIp(Hostname))
-            //    {
-            //        IPAddress ip_address = IPAddress.Parse(Hostname);
-            //        IPEndPoint ipLocalEndPoint = new IPEndPoint(ip_address, PortNumber);
-            //        client = new TcpClient();
-            //        client.Connect(ipLocalEndPoint);
-
-            //    }
-            //    else
-            //    {
-            //        IPHostEntry hostInfo = Dns.GetHostEntry(Hostname);
-            //        client = new TcpClient(hostInfo.HostName, PortNumber);
-            //        if (client.Connected) { tcp_connected = true; }
-            //    }
- 
-            //}
-            //catch (SocketException e4)
-            //{
-            //    //               DiagLabel.Text = "SocketException: " + e4;
-            //    SetDiagText("Failed to connect to TCP");
-            //    tcp_connected = false;
-            //}
-            //if (tcp_connected)
-            //{
-            //    try
-            //    {
-            //        tcp_stream = client.GetStream();
-            //        SetHostNameText(Hostname + ":" + PortNumber);
-            //        tcp_connected = true;
-            //        ZumConsole.Properties.Settings.Default.Hostname = Hostname;
-            //        ZumConsole.Properties.Settings.Default.Port = PortNumber;
-            //        ZumConsole.Properties.Settings.Default.Save();
-            //    }
-            //    catch (SocketException e5)
-            //    {
-            //        SetDiagText("Failure to assign TCP steam" + e5);
-            //        tcp_connected = false;
-            //    }
-            //}
 
         }
 
@@ -544,7 +547,13 @@ namespace ZumConsole
                 }
                 if (nTry > 0)
                 {
+ //                   SetDiagText("worker is free");
                     this.backgroundWorker2.RunWorkerAsync();
+                    SensConsCommand.Enabled = false;
+                }
+                else
+                {
+                    SetDiagText("worker is busy");
                 }
             }
             else
@@ -604,6 +613,7 @@ namespace ZumConsole
 
 
             form3.ScanFormClosing += new Form3.ScanFormClosingHandler(ScanFormClosed);
+            form3.ScanStartStop += new Form3.ScanStartStopHandler(ScanStarted);
             form3.Show();
         }
         private void ScanFormClosed(object sender, ScanFormCloseEventArgs e)
@@ -611,10 +621,23 @@ namespace ZumConsole
             Energyscan.Enabled = true;
         
         }
+        private void ScanStarted(object sender, ScanStartStopEventArgs e)
+        {
+            if (e.Started == 1)
+            {
 
+                SensConsCommand.Enabled = false;
+            }
+            else
+            {
+                SensConsCommand.Enabled = true;
+            }
+        }
+ 
         private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-  
+            SensConsCommand.Enabled = true;
+ 
         }
 
         private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -632,8 +655,7 @@ namespace ZumConsole
             else
             {
                 tcpresponse = String.Empty;
-                e.Result = SendStringToTCP(inputline, tcpresponse, 500);
-                this.backgroundWorker2.CancelAsync();
+                e.Result = SendStringToTCP(inputline, tcpresponse, 50);
             }
         }
  
