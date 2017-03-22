@@ -19,8 +19,8 @@ namespace ZumConsole
  /* Singleton class for network connection. It is used for connecting different forms to Control System TCP/IP console.
   It is said that Control system console supports a limited (up to 5) number of console connections, thus forms
   will share one connection. They will not be able to make transactions simultaneously.
-  */ 
-    public sealed class NetworkConn
+  */
+    public sealed class NetworkConn : IDisposable
     {
         private static NetworkConn instance = null;
         private static readonly object padlock = new object();
@@ -126,5 +126,28 @@ namespace ZumConsole
                 }
             }
         }
+        protected void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (client != null)
+                {
+                    client.Close();
+                }
+                if (stream != null)
+                {
+                    stream.Close();
+                }
+
+            }
+
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+        }
+
     }
 }

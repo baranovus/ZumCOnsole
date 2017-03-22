@@ -29,19 +29,13 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
-            this.HostName = new System.Windows.Forms.TextBox();
             this.PortName = new System.Windows.Forms.TextBox();
             this.IP_addr_label = new System.Windows.Forms.Label();
             this.Port_label = new System.Windows.Forms.Label();
             this.Set = new System.Windows.Forms.Button();
+            this.ConnectingLabel = new System.Windows.Forms.Label();
+            this.HostNameBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-            // 
-            // HostName
-            // 
-            this.HostName.Location = new System.Drawing.Point(63, 56);
-            this.HostName.Name = "HostName";
-            this.HostName.Size = new System.Drawing.Size(253, 20);
-            this.HostName.TabIndex = 0;
             // 
             // PortName
             // 
@@ -78,16 +72,32 @@
             this.Set.UseVisualStyleBackColor = true;
             this.Set.Click += new System.EventHandler(this.Set_Click);
             // 
+            // ConnectingLabel
+            // 
+            this.ConnectingLabel.AutoSize = true;
+            this.ConnectingLabel.Location = new System.Drawing.Point(184, 188);
+            this.ConnectingLabel.Name = "ConnectingLabel";
+            this.ConnectingLabel.Size = new System.Drawing.Size(0, 13);
+            this.ConnectingLabel.TabIndex = 5;
+            // 
+            // HostNameBox
+            // 
+            this.HostNameBox.Location = new System.Drawing.Point(69, 60);
+            this.HostNameBox.Name = "HostNameBox";
+            this.HostNameBox.Size = new System.Drawing.Size(245, 20);
+            this.HostNameBox.TabIndex = 6;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(564, 262);
+            this.Controls.Add(this.HostNameBox);
+            this.Controls.Add(this.ConnectingLabel);
             this.Controls.Add(this.Set);
             this.Controls.Add(this.Port_label);
             this.Controls.Add(this.IP_addr_label);
             this.Controls.Add(this.PortName);
-            this.Controls.Add(this.HostName);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form2";
             this.Text = "Communication Settings";
@@ -100,10 +110,12 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox HostName;
         private System.Windows.Forms.TextBox PortName;
         private System.Windows.Forms.Label IP_addr_label;
         private System.Windows.Forms.Label Port_label;
         private System.Windows.Forms.Button Set;
+        private System.Windows.Forms.Label ConnectingLabel;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.TextBox HostNameBox;
     }
 }

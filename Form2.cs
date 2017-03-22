@@ -24,9 +24,9 @@ namespace ZumConsole
         /***********************************************************/        
         
         int PortNumber = 4900;
-        String Hostname = String.Empty; 
- 
+        String Hostname = String.Empty;
 
+        delegate void SetTextCallback(string text);
         
         public Form2()
         {
@@ -34,16 +34,34 @@ namespace ZumConsole
             InitializeComponent();
             PortNumber = ZumConsole.Properties.Settings.Default.Port;
             PortName.Text = "" + PortNumber;
-            HostName.Text = ZumConsole.Properties.Settings.Default.Hostname;
+            HostNameBox.Text = ZumConsole.Properties.Settings.Default.Hostname;
 
 
         }
 
+        private void SetDiagText(string text)
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread. 
+            // If these threads are different, it returns true.
+            if (this.ConnectingLabel.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(SetDiagText);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                this.ConnectingLabel.Text = text;
+            }
+        }
+        
         private void Set_Click(object sender, EventArgs e)
         {
-            string sNewHost = HostName.Text;
+            string sNewHost = HostNameBox.Text;
             string sNewPort = PortName.Text;
             Int32 sPort_num = 0;
+            ConnectingLabel.Text = "Connecting...";
+            Application.DoEvents();
             try {
                 sPort_num = Convert.ToInt32(sNewPort);
             }
@@ -52,7 +70,8 @@ namespace ZumConsole
                 sNewPort = "0";
                 sPort_num = 0;
             }
-            ZumConsole.Properties.Settings.Default.Hostname = HostName.Text;
+
+            ZumConsole.Properties.Settings.Default.Hostname = HostNameBox.Text;
             ZumConsole.Properties.Settings.Default.Port = sPort_num;
             ZumConsole.Properties.Settings.Default.Save();
 
@@ -78,7 +97,7 @@ namespace ZumConsole
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ZumConsole.Properties.Settings.Default.Hostname = HostName.Text;
+            ZumConsole.Properties.Settings.Default.Hostname = HostNameBox.Text;
             ZumConsole.Properties.Settings.Default.Port = PortNumber;
             ZumConsole.Properties.Settings.Default.Save();
  

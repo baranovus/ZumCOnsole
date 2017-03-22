@@ -325,12 +325,12 @@ namespace ZumConsole
             catch (SocketException e6)
             {
 
-                SetDiagText("Socket is busy" + e6);
+                SetDiagText("Socket is busy");
 
             }
             catch(IOException e7)
             {
-                SetDiagText("Socket is busy" + e7);
+                SetDiagText("Socket is busy with another connection");
             }
             catch
             {

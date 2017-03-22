@@ -224,7 +224,24 @@ namespace ZumConsole
         
         private void Net_Settings_ButtonClicked(object sender, NetUpdateEventArgs e)
         {
-            // update the forms values from the event args
+ 
+/*          If connection belongs to the current form3 and another connection parameters
+            are requested,  existing connection may be closed and newly requested one
+            can be established. If connection belongs to the console form1, newly
+            requested parametrs should be ignored
+*/ 
+            if (net_conn.IsMyConnection(Form3NeworkConnectionOwner))
+            {
+                int PortNum = Convert.ToInt32(e.PortName);
+                if((net_conn.GetHostName() != e.HostName)||(net_conn.GetPort() != PortNum))
+                {
+                    net_conn.CloseConnection(Form3NeworkConnectionOwner);   //close if hostname or port differ
+                    ChartInitialize();                                      //from current ones
+
+                }
+
+            }
+            
             
             if (!net_conn.GetTcpConnected())
             {
@@ -241,6 +258,7 @@ namespace ZumConsole
                     SetHostNameText("Failed to connect to TCP");
                 }
             }
+            
             else
             {
                 tcp_stream = net_conn.GetStream();
@@ -398,6 +416,10 @@ namespace ZumConsole
                 {
                     net_conn.CloseConnection(Form3NeworkConnectionOwner);
                 }
+            }
+            if(ann != null)
+            {
+                ann.Dispose();
             }
         }
 
