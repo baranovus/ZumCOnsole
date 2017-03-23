@@ -26,38 +26,5 @@ namespace ZumConsole
         }
     }
 
-    public sealed class SingleGlobal
-    {
-        private static SingleGlobal instance = null;
-        private static readonly object padlock = new object();
-        private static string _globalVar = "";
-        SingleGlobal()
-        {
-        }
-
-        public static SingleGlobal Instance
-        {
-            get
-            {
-                lock (padlock)
-                {
-                    if (instance == null)
-                    {
-                        instance = new SingleGlobal();
-                    }
-                    return instance;
-                }
-            }
-        }
-  
-        public void SetGlobal(string instring)
-        {
-            _globalVar = instring;
-        }
-        public string GetGlobal()
-        {
-            return _globalVar;
-        }
-
-    }
+ 
 }
