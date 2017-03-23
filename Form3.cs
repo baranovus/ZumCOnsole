@@ -64,6 +64,23 @@ namespace ZumConsole
             DataInitialize();
             ChartInitialize();
             ChartCustomize();
+/*
+  *****If connection has beed opened in Form1,  button "CommSettings" is disabled and
+ the network settings from Form1 are used and printed  It will disable Form3 from connecting
+ to a contol system or RF gate other than that, used in Form1.
+ If such connection to other gates is desirable, the following block should be removed.     
+ */
+            if(net_conn.GetTcpConnected() == true)
+            {
+                tcp_stream = net_conn.GetStream();
+                Hostname = net_conn.GetHostName();
+                PortNumber = net_conn.GetPort();
+                SetHostNameText(Hostname + ":" + PortNumber);
+                tcp_connected = true;
+                ConnSettings3.Enabled = false;
+            }
+  /***************************************************************************************/
+
         }
 
         private void Form3_Load(object sender, EventArgs e)
