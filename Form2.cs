@@ -65,7 +65,7 @@ namespace ZumConsole
             try {
                 sPort_num = Convert.ToInt32(sNewPort);
             }
-            catch (FormatException e1)
+            catch (FormatException  e1)
             {
                 sNewPort = "0";
                 sPort_num = 0;
