@@ -8,3 +8,5 @@ C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConso
 C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Release\ZumConsole.csproj.GenerateResource.Cache
 C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Release\ZumConsole.exe
 C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Release\ZumConsole.pdb
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\bin\Release\App.config
+C:\Users\abaranov\Documents\Visual Studio 2013\Projects\ConsoleTerminal\ZumConsole\obj\Release\ZumConsole.csprojResolveAssemblyReference.cache
